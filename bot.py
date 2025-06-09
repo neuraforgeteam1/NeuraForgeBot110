@@ -1,17 +1,11 @@
+import logging
 import asyncio
-import loggingfrom aiogram import Bot
+from aiogram import Bot
 from aiogram.dispatcher.dispatcher import Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from config import Config
-from database.db import init_db, close_db
-from handlers import (
-    register_user_handlers,
-    register_admin_handlers,
-    register_marketing_handlers,
-    register_payment_handlers
-)
+from handlers import register_user_handlers, register_admin_handlers
 from services.utils import setup_logging
-
 setup_logging()
 
 async def on_startup(dp: Dispatcher):
