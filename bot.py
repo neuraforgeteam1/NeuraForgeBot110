@@ -1,12 +1,38 @@
 import logging
 import asyncio
+import sys
+from pathlib import Path
 from aiogram import Bot
 from aiogram.dispatcher.dispatcher import Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from config import Config
-from handlers import register_user_handlers, register_admin_handlers
-from services.utils import setup_logging
-setup_logging()
+
+# تنظیمات مسیر برای Render.com
+try:
+    site_packages = str(Path(__file__).parent / '.venv' / 'lib' / 'python3.11' / 'site-packages'
+    if site_packages not in sys.path:
+        sys.path.append(site_packages)
+except Exception as e:
+    logging.warning(f"Could not add site-packages to path: {e}")
+
+async def main():
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+    
+    config = Config()
+    storage = MemoryStorage()
+    bot = Bot(token=config.BOT_TOKEN)
+    dp = Dispatcher(storage=storage)
+    
+    try:
+        await dp.start_polling(bot)
+    finally:
+        await bot.session.close()
+
+if __name__ == '__main__':
+    asyncio.run(main())
 
 async def on_startup(dp: Dispatcher):
     await init_db()
@@ -75,10 +101,4 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.run(main())
-    import sys
-from pathlib import Path
-
-# اضافه کردن مسیر پکیج‌های نصب شده به sys.path
-site_packages = str(Path(__file__).parent / '.venv' / 'lib' / 'python3.11' / 'site-packages'
-if site_packages not in sys.path:
-    sys.path.append(site_packages)
+   
