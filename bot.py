@@ -75,3 +75,10 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.run(main())
+    import sys
+from pathlib import Path
+
+# اضافه کردن مسیر پکیج‌های نصب شده به sys.path
+site_packages = str(Path(__file__).parent / '.venv' / 'lib' / 'python3.11' / 'site-packages'
+if site_packages not in sys.path:
+    sys.path.append(site_packages)
