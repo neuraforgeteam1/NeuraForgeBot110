@@ -1,6 +1,6 @@
 import asyncio
-import logging
-from aiogram import Bot, Dispatcher, types
+import loggingfrom aiogram import Bot
+from aiogram.dispatcher.dispatcher import Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from config import Config
 from database.db import init_db, close_db
