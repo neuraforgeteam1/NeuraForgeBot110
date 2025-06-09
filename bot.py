@@ -35,8 +35,8 @@ async def on_shutdown(dp: Dispatcher):
 async def main():
     config = Config()
     storage = MemoryStorage()
-    bot = Bot(token=config.BOT_TOKEN, parse_mode="HTML")
-    dp = Dispatcher(bot, storage=storage)
+    bot = Bot(token=config.BOT_TOKEN)
+    dp = Dispatcher(storage=storage)
     
     register_user_handlers(dp)
     register_admin_handlers(dp)
