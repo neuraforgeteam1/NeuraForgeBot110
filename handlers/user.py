@@ -1,6 +1,6 @@
 from aiogram import Dispatcher, types
-from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Command
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
 from database.models import User, License
 from database.queries import get_user_by_telegram_id, create_user, get_active_license
 from services.license import generate_license_key, validate_license
@@ -8,6 +8,7 @@ from services.marketing import generate_referral_code, process_referral
 from services.utils import get_user_language
 from config import Config
 from aiogram import Dispatcher
+from aiogram.fsm.storage.memory import MemoryStorage
 
 config = Config()
 
