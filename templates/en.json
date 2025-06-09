@@ -1,0 +1,9 @@
+{
+  "start": "Welcome to NeuraForgebot license sales bot! 🌟\n\nUse the menu below to purchase a license.",
+  "select_plan": "Please select one of the following plans:",
+  "license_created": "✅ Your license has been created successfully!\n\n🔑 Key: {license_key}\n\n📱 Device ID: {device_id}",
+  "payment_tron": "💰 Amount to pay: {amount} USDT\n\n🔻 Wallet address:\n{address}\n\nPlease send the amount to the above address.",
+  "payment_bank": "💰 Amount to pay: {amount} Toman\n\n💳 Card number:\n{card_number}\n\nAfter payment, please send a photo of the receipt.",
+  "admin_welcome": "👮‍♂️ Welcome to Admin Panel!",
+  "referral_info": "👤 Marketing Panel\n\n🔗 Your referral link:\n{referral_link}\n\n📊 Referral stats:\nLevel 1: {level1}\nLevel 2: {level2}\nLevel 3: {level3}\n\n💵 Total earnings: {total_commission} USDT"
+}

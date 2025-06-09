@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: neuraforge-service
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "bash start.sh"
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_IDS
+        sync: false
+      - key: API_LICENSE_TOKEN
+        sync: false
+      - key: BNB_WALLET
+        sync: false
+      - key: TETHER_WALLET
+        sync: false
+      - key: CARD_NUMBER
+        sync: false
+      - key: SHABA_NUMBER
+        sync: false
+      - key: PAYPAL_LINK
+        sync: false
+      - key: PAYPAL_ACTIVE
+        sync: false
+      - key: GPT_API_KEY
+        sync: false
+      - key: AI_CHAT_ENABLED
+        sync: false
+      - key: AI_LANG
+        sync: false
