@@ -7,6 +7,7 @@ from services.license import generate_license_key, validate_license
 from services.marketing import generate_referral_code, process_referral
 from services.utils import get_user_language
 from config import Config
+from aiogram import Dispatcher
 
 config = Config()
 
@@ -99,4 +100,12 @@ def register_user_handlers(dp: Dispatcher):
     dp.register_message_handler(
         process_device_id, 
         state=UserStates.ENTERING_DEVICE_ID
-    )
+    )# handlers/user.py
+
+def register_user_handlers(dp: Dispatcher):
+    # اینجا هندلرهای کاربران عادی را ثبت کنید
+    from . import commands, messages, callbacks
+    
+    commands.register_commands(dp)
+    messages.register_message_handlers(dp)
+    callbacks.register_callback_handlers(dp)
