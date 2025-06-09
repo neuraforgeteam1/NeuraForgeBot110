@@ -55,3 +55,29 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.run(main())
+
+    # bot.py
+from aiogram import Bot, Dispatcher
+from config import Config
+
+# تغییر در نحوه ایمپورت
+from handlers.user import register_user_handlers
+from handlers.admin import register_admin_handlers
+from handlers.marketing import register_marketing_handlers
+from handlers.payment import register_payment_handlers
+
+async def main():
+    config = Config()
+    bot = Bot(token=config.BOT_TOKEN)
+    dp = Dispatcher(bot)
+    
+    # ثبت هندلرها
+    register_user_handlers(dp)
+    register_admin_handlers(dp)
+    register_marketing_handlers(dp)
+    register_payment_handlers(dp)
+    
+    await dp.start_polling()
+
+if __name__ == '__main__':
+    asyncio.run(main())
