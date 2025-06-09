@@ -9,7 +9,7 @@ from config import Config
 
 # تنظیمات مسیر برای Render.com
 try:
-    site_packages = str(Path(__file__).parent / '.venv' / 'lib' / 'python3.11' / 'site-packages'
+    site_packages = str(Path(__file__).parent / '.venv' / 'lib' / 'python3.11' / 'site-packages')
     if site_packages not in sys.path:
         sys.path.append(site_packages)
 except Exception as e:
