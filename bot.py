@@ -101,7 +101,8 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.run(main())
-   async def main():
+
+async def main():
     config = Config()
     
     if not config.TRON_WALLET:
