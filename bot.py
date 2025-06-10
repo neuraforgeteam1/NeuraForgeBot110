@@ -38,20 +38,18 @@ async def main():
         # حذف به‌روزرسانی‌های قدیمی
         await bot.delete_webhook(drop_pending_updates=True)
         
-        # راه‌اندازی همزمان پولینگ و سرور سلامت
-        runner = web.AppRunner(app)
-        await runner.setup()
-        site = web.TCPSite(runner, host="0.0.0.0", port=8080)
-        await site.start()
-        
-        logging.info("Starting bot polling...")
+        # سرور سلامت
+    app = web.Application()
+    app.add_routes([web.get("/health", health_check)])
+    runner = web.AppRunner(app)
+    await runner.setup()
+    await web.TCPSite(runner, "0.0.0.0", 8080).start()
+
+    try:
         await dp.start_polling(bot)
-        
-    except Exception as e:
-        logging.error(f"Bot stopped with error: {e}")
     finally:
         await runner.cleanup()
         await bot.session.close()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(run_bot())
