@@ -1,11 +1,10 @@
 import logging
 import asyncio
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher, types, F
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiohttp import web
 from config import Config
 
-# تنظیم هندلر سلامت
 async def health_check(request):
     return web.Response(text="OK")
 
@@ -26,8 +25,8 @@ async def main():
         types.BotCommand(command="help", description="راهنما")
     ])
     
-    # هندلرهای خود را اینجا ثبت کنید
-    @dp.message(commands=["start"])
+    # ثبت هندلرها به روش جدید aiogram 3.x
+    @dp.message(F.text == "/start")
     async def cmd_start(message: types.Message):
         await message.answer("سلام! به ربات خوش آمدید.")
     
@@ -46,19 +45,13 @@ async def main():
         await site.start()
         
         logging.info("Starting bot polling...")
-        await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+        await dp.start_polling(bot)
         
+    except Exception as e:
+        logging.error(f"Bot stopped with error: {e}")
     finally:
         await runner.cleanup()
         await bot.session.close()
 
 if __name__ == "__main__":
     asyncio.run(main())
-    
-async def main():
-    config = Config()
-    
-    if not config.TRON_WALLET:
-        logging.warning("TRON_WALLET not set, some payment features may be disabled")
-    
-    # بقیه کدهای راه‌اندازی...
