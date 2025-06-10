@@ -62,3 +62,13 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(run_bot())
+
+    async def main():
+    # حذف کامل هرگونه اتصال قبلی
+    await bot.delete_webhook(drop_pending_updates=True)
+    
+    # اضافه کردن این خط برای اطمینان از تک نمونه بودن
+    await bot.session.close()  # بستن هر session باز مانده
+    
+    # راه‌اندازی جدید
+    await dp.start_polling(bot, skip_updates=True)
