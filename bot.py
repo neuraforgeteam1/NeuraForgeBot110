@@ -8,6 +8,15 @@ from config import Config
 async def health_check(request):
     return web.Response(text="OK")
 
+async def run_bot():
+    bot = Bot(token="YOUR_TOKEN")
+    dp = Dispatcher()
+    
+    # تنظیم هندلرها
+    @dp.message(F.text == "/start")
+    async def start(message: types.Message):
+        await message.answer("ربات فعال است!")
+
 async def main():
     # تنظیمات لاگینگ
     logging.basicConfig(
