@@ -1,5 +1,5 @@
-import logging
 import asyncio
+import logging
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiohttp import web
@@ -7,15 +7,6 @@ from config import Config
 
 async def health_check(request):
     return web.Response(text="OK")
-
-async def run_bot():
-    bot = Bot(token="YOUR_TOKEN")
-    dp = Dispatcher()
-    
-    # تنظیم هندلرها
-    @dp.message(F.text == "/start")
-    async def start(message: types.Message):
-        await message.answer("ربات فعال است!")
 
 async def main():
     # تنظیمات لاگینگ
@@ -34,8 +25,8 @@ async def main():
         types.BotCommand(command="help", description="راهنما")
     ])
     
-    # ثبت هندلرها به روش جدید aiogram 3.x
-    @dp.message(F.text == "/start")
+    # ثبت هندلرها
+    @dp.message(F.command == "start")
     async def cmd_start(message: types.Message):
         await message.answer("سلام! به ربات خوش آمدید.")
     
@@ -43,32 +34,24 @@ async def main():
     app = web.Application()
     app.add_routes([web.get("/health", health_check)])
     
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, host="0.0.0.0", port=8080)
+    await site.start()
+    
     try:
         # حذف به‌روزرسانی‌های قدیمی
         await bot.delete_webhook(drop_pending_updates=True)
         
-        # سرور سلامت
-    app = web.Application()
-    app.add_routes([web.get("/health", health_check)])
-    runner = web.AppRunner(app)
-    await runner.setup()
-    await web.TCPSite(runner, "0.0.0.0", 8080).start()
-
-    try:
-        await dp.start_polling(bot)
+        # شروع پولینگ
+        logging.info("Starting bot polling...")
+        await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+        
+    except Exception as e:
+        logging.error(f"Bot stopped with error: {e}")
     finally:
         await runner.cleanup()
         await bot.session.close()
 
 if __name__ == "__main__":
-    asyncio.run(run_bot())
-
-    async def main():
-    # حذف کامل هرگونه اتصال قبلی
-    await bot.delete_webhook(drop_pending_updates=True)
-    
-    # اضافه کردن این خط برای اطمینان از تک نمونه بودن
-    await bot.session.close()  # بستن هر session باز مانده
-    
-    # راه‌اندازی جدید
-    await dp.start_polling(bot, skip_updates=True)
+    asyncio.run(main())
