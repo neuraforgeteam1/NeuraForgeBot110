@@ -101,4 +101,10 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.run(main())
-   
+   async def main():
+    config = Config()
+    
+    if not config.TRON_WALLET:
+        logging.warning("TRON_WALLET not set, some payment features may be disabled")
+    
+    # بقیه کدهای راه‌اندازی...
