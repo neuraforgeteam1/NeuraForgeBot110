@@ -1,34 +1,28 @@
 services:
-  - type: web
-    name: neuraforge-service
+  - type: worker               # ❗️ نوع سرویس باید Worker باشه، نه Web
+    name: NeuraForgeBot
     env: python
     plan: free
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "bash start.sh"
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: python bot.py
+    autoDeploy: true
+
     envVars:
       - key: BOT_TOKEN
-        sync: false
-      - key: DATABASE_URL
-        sync: false
-      - key: ADMIN_IDS
-        sync: false
-      - key: API_LICENSE_TOKEN
-        sync: false
+        fromEnvVar: BOT_TOKEN
+      - key: ADMIN_ID
+        fromEnvVar: ADMIN_ID
+      - key: DB_URL
+        fromEnvVar: DB_URL
+      - key: CRYPTO_API_KEY
+        fromEnvVar: CRYPTO_API_KEY
+      - key: USDT_WALLET
+        fromEnvVar: USDT_WALLET
       - key: BNB_WALLET
-        sync: false
-      - key: TETHER_WALLET
-        sync: false
-      - key: CARD_NUMBER
-        sync: false
-      - key: SHABA_NUMBER
-        sync: false
-      - key: PAYPAL_LINK
-        sync: false
-      - key: PAYPAL_ACTIVE
-        sync: false
-      - key: GPT_API_KEY
-        sync: false
+        fromEnvVar: BNB_WALLET
+      - key: TRX_WALLET
+        fromEnvVar: TRX_WALLET
       - key: AI_CHAT_ENABLED
-        sync: false
-      - key: AI_LANG
-        sync: false
+        fromEnvVar: AI_CHAT_ENABLED
+      - key: GPT_API_KEY
+        fromEnvVar: GPT_API_KEY
