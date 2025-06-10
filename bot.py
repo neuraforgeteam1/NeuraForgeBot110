@@ -1,107 +1,60 @@
 import logging
 import asyncio
-import sys
-from pathlib import Path
-from aiogram import Bot
-from aiogram.dispatcher.dispatcher import Dispatcher
+from aiogram import Bot, Dispatcher, types
 from aiogram.fsm.storage.memory import MemoryStorage
+from aiohttp import web
 from config import Config
 
-# تنظیمات مسیر برای Render.com
-try:
-    site_packages = str(Path(__file__).parent / '.venv' / 'lib' / 'python3.11' / 'site-packages')
-    if site_packages not in sys.path:
-        sys.path.append(site_packages)
-except Exception as e:
-    logging.warning(f"Could not add site-packages to path: {e}")
+# تنظیم هندلر سلامت
+async def health_check(request):
+    return web.Response(text="OK")
 
 async def main():
+    # تنظیمات لاگینگ
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
     
     config = Config()
-    storage = MemoryStorage()
     bot = Bot(token=config.BOT_TOKEN)
-    dp = Dispatcher(storage=storage)
+    dp = Dispatcher(storage=MemoryStorage())
     
-    try:
-        await dp.start_polling(bot)
-    finally:
-        await bot.session.close()
-
-if __name__ == '__main__':
-    asyncio.run(main())
-
-async def on_startup(dp: Dispatcher):
-    await init_db()
-    await dp.bot.set_my_commands([
-        types.BotCommand("start", "شروع کار با ربات"),
-        types.BotCommand("buy", "خرید لایسنس"),
-        types.BotCommand("license", "مدیریت لایسنس"),
-        types.BotCommand("marketing", "پنل بازاریابی"),
-        types.BotCommand("support", "پشتیبانی"),
-        types.BotCommand("admin", "ورود به پنل مدیریت")
+    # تنظیم دستورات منو
+    await bot.set_my_commands([
+        types.BotCommand(command="start", description="شروع کار"),
+        types.BotCommand(command="help", description="راهنما")
     ])
-    logging.info("Bot started successfully")
-
-async def on_shutdown(dp: Dispatcher):
-    await close_db()
-    await dp.storage.close()
-    await dp.storage.wait_closed()
-    logging.info("Bot shutdown complete")
-
-async def main():
-    config = Config()
-    storage = MemoryStorage()
-    bot = Bot(token=config.BOT_TOKEN)
-    dp = Dispatcher(storage=storage)
     
-    register_user_handlers(dp)
-    register_admin_handlers(dp)
-    register_marketing_handlers(dp)
-    register_payment_handlers(dp)
+    # هندلرهای خود را اینجا ثبت کنید
+    @dp.message(commands=["start"])
+    async def cmd_start(message: types.Message):
+        await message.answer("سلام! به ربات خوش آمدید.")
     
-    dp.register_startup_handler(on_startup)
-    dp.register_shutdown_handler(on_shutdown)
+    # ایجاد سرور سلامت
+    app = web.Application()
+    app.add_routes([web.get("/health", health_check)])
     
     try:
-        await dp.start_polling()
-    except Exception as e:
-        logging.exception("Polling error")
+        # حذف به‌روزرسانی‌های قدیمی
+        await bot.delete_webhook(drop_pending_updates=True)
+        
+        # راه‌اندازی همزمان پولینگ و سرور سلامت
+        runner = web.AppRunner(app)
+        await runner.setup()
+        site = web.TCPSite(runner, host="0.0.0.0", port=8080)
+        await site.start()
+        
+        logging.info("Starting bot polling...")
+        await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+        
     finally:
+        await runner.cleanup()
         await bot.session.close()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())
-
-    # bot.py
-from aiogram import Bot, Dispatcher
-from config import Config
-
-# تغییر در نحوه ایمپورت
-from handlers.user import register_user_handlers
-from handlers.admin import register_admin_handlers
-from handlers.marketing import register_marketing_handlers
-from handlers.payment import register_payment_handlers
-
-async def main():
-    config = Config()
-    bot = Bot(token=config.BOT_TOKEN)
-    dp = Dispatcher(bot)
     
-    # ثبت هندلرها
-    register_user_handlers(dp)
-    register_admin_handlers(dp)
-    register_marketing_handlers(dp)
-    register_payment_handlers(dp)
-    
-    await dp.start_polling()
-
-if __name__ == '__main__':
-    asyncio.run(main())
-
 async def main():
     config = Config()
     
